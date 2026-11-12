@@ -31,16 +31,22 @@ let cameraConnected = false;
 
 let announcedObject = "";
 
+document.addEventListener(
+    "click",
+    () => {
+        speechSynthesis.resume();
+    },
+    { once:true }
+);
+
 video.src = PHONE_STREAM;
-
-
 
 function setConnected(){
 
     cameraConnected = true;
 
     cameraStatus.textContent =
-    "Connected and Active";
+    "Connected";
 
     cameraStatus.className =
     "connected";
@@ -48,8 +54,6 @@ function setConnected(){
     cameraOverlay.style.display =
     "none";
 }
-
-
 
 function setDisconnected(){
 
@@ -69,8 +73,6 @@ function setDisconnected(){
     cameraOverlay.style.display =
     "flex";
 }
-
-
 
 function checkConnection(){
 
@@ -110,13 +112,12 @@ setInterval(
 
 checkConnection();
 
-
-
 function speakObject(name){
 
-    if(name !== announcedObject){
-
-        speechSynthesis.cancel();
+    if(
+        name !== announcedObject &&
+        !speechSynthesis.speaking
+    ){
 
         const speech =
         new SpeechSynthesisUtterance(
@@ -126,15 +127,22 @@ function speakObject(name){
         speech.lang =
         "en-US";
 
+        speech.rate = 1;
+
+        speech.pitch = 1;
+
+        speech.volume = 1;
+
+        speech.onend = () => {
+
+            announcedObject = name;
+        };
+
         speechSynthesis.speak(
             speech
         );
-
-        announcedObject = name;
     }
 }
-
-
 
 async function loadModel(){
 
@@ -146,12 +154,10 @@ async function loadModel(){
 
 loadModel();
 
-
-
 function detectObjects(){
 
-    canvas.width = 640;
-    canvas.height = 480;
+    canvas.width = video.offsetWidth;
+    canvas.height = video.offsetHeight;
 
     setInterval(async () => {
 
@@ -176,7 +182,7 @@ function detectObjects(){
 
             if(
                 predictions.length > 0 &&
-                predictions[0].score > 0.60
+                predictions[0].score > 0.45
             ){
 
                 const best =
@@ -190,42 +196,57 @@ function detectObjects(){
                     best.score * 100
                 ).toFixed(1);
 
+                const x =
+                Math.max(0, best.bbox[0]);
 
+                const y =
+                Math.max(0, best.bbox[1]);
 
-                ctx.beginPath();
-
-                ctx.rect(
-                    best.bbox[0],
-                    best.bbox[1],
+                const width =
+                Math.min(
                     best.bbox[2],
-                    best.bbox[3]
+                    canvas.width - x
                 );
 
-                ctx.lineWidth = 4;
+                const height =
+                Math.min(
+                    best.bbox[3],
+                    canvas.height - y
+                );
 
                 ctx.strokeStyle =
                 "#ff0000";
 
-                ctx.stroke();
+                ctx.lineWidth = 2;
 
+                ctx.strokeRect(
+                    x,
+                    y,
+                    width,
+                    height
+                );
 
+                ctx.fillStyle ="#ff0000";
 
-                ctx.fillStyle =
-                "#ff0000";
+                ctx.fillRect(
+                    x,
+                    Math.max(0, y - 30),
+                    220,
+                    28
+                );
 
-                ctx.font =
-                "bold 28px Arial";
+                ctx.fillStyle ="#ffffff";
+
+                ctx.font ="bold 18px Arial";
 
                 ctx.fillText(
 
                     `${best.class.toUpperCase()} ${confidence}%`,
 
-                    best.bbox[0],
+                    x,
 
-                    best.bbox[1] - 15
+                    Math.max(25, y - 10)
                 );
-
-
 
                 speakObject(
                     best.class
@@ -247,5 +268,5 @@ function detectObjects(){
             console.log(error);
         }
 
-    },500);
+    },200);
 }

@@ -17,18 +17,24 @@ body{
     display:flex;
     flex-direction:column;
 
-    justify-content:space-evenly;
+    justify-content:center;
     align-items:center;
+    gap:20px;
 }
 
 h1{
     color:#222;
-    font-size:32px;
+    font-size:35px;
+    font-weight:bold;
+    text-align:center;
 }
 
 .info-panel{
     display:flex;
     gap:20px;
+    width:640px;
+    justify-content:center;
+    align-items:center;
 }
 
 .card{
@@ -37,7 +43,6 @@ h1{
     padding:15px;
     border-radius:12px;
     text-align:center;
-    box-shadow:0 3px 10px rgba(0,0,0,.15);
 }
 
 .card h3{
@@ -60,13 +65,13 @@ h1{
 .video-wrapper{
     position:relative;
 
-    width:640px;
-    height:480px;
+    width:900px;
+    height:600px;
 }
 
 #video{
-    width:640px;
-    height:480px;
+    width:100%;
+    height:100%;
 
     border-radius:10px;
 
@@ -81,8 +86,8 @@ h1{
     top:0;
     left:0;
 
-    width:640px;
-    height:480px;
+    width:100% ;
+    height:100%;
 
     pointer-events:none;
 }
@@ -102,7 +107,7 @@ h1{
     justify-content:center;
     align-items:center;
 
-    background:#1f2937;
+    background:#222;
 
     color:white;
 
