@@ -1,5 +1,5 @@
 const PHONE_IP =
-"http://192.168.100.7:8080";
+"http://192.168.43.248:8080";
 
 const PHONE_STREAM =
 PHONE_IP + "/video";
@@ -150,6 +150,23 @@ async function loadModel(){
     await cocoSsd.load();
 
     detectObjects();
+
+    /*try {
+
+        console.log("Loading model...");
+
+        model = await cocoSsd.load();
+
+        console.log("MODEL LOADED");
+        console.log(model);
+
+        detectObjects();
+
+    } catch (error) {
+
+        console.error("MODEL ERROR:", error);
+
+    }*/
 }
 
 loadModel();
